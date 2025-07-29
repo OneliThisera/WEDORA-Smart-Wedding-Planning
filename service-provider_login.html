@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedora-Service Provider Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #f645a3;
+        }
+        
+        .tagline {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 30px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            color: #333;
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .auth-header h2 {
+            color: #6c5ce7;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .auth-header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background-color: #e6fffa;
+            color: #00b894;
+            border: 1px solid #00b894;
+        }
+        
+        .alert-danger {
+            background-color: #fff5f5;
+            color: #ff5252;
+            border: 1px solid #ff5252;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #6c5ce7;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            border: none;
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background-color: #6c5ce7;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #5649c0;
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .auth-footer a {
+            color: #6c5ce7;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .auth-footer p {
+            margin-bottom: 10px;
+        }
+        
+        .auth-footer p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Social Login Styles */
+        .social-login {
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .social-login p {
+            color: #666;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .social-login p::before,
+        .social-login p::after {
+            content: "";
+            display: inline-block;
+            width: 30%;
+            height: 1px;
+            background: #ddd;
+            position: absolute;
+            top: 50%;
+        }
+
+        .social-login p::before {
+            left: 0;
+        }
+
+        .social-login p::after {
+            right: 0;
+        }
+
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #ddd;
+            background: white;
+            color: #555;
+            text-decoration: none;
+            width: 100%;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .social-btn i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .google-btn {
+            border-color: #DB4437;
+            color: #DB4437;
+        }
+
+        .google-btn:hover {
+            background-color: #f8f1f1;
+        }
+
+        .facebook-btn {
+            border-color: #4267B2;
+            color: #4267B2;
+        }
+
+        .facebook-btn:hover {
+            background-color: #f0f4fb;
+        }
+
+        .vendor-type-group {
+            margin-bottom: 20px;
+        }
+        
+        .vendor-type-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .vendor-type-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            background-color: white;
+            transition: border-color 0.3s;
+        }
+        
+        .vendor-type-select:focus {
+            outline: none;
+            border-color: #6c5ce7;
+        }
+        
+        .vendor-icon {
+            margin-right: 8px;
+            color: #6c5ce7;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="logo">Wedora</div>
+       
+        
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Login</h2>
+                <p>Access your Wedora account to manage your services</p>
+            </div>
+            
+            <form action="service-provider_login.php" method="POST" class="auth-form">
+                
+               <div class="vendor-type-group">
+                    <label for="vendor_type" class="vendor-type-label">Service Type</label>
+                    <select id="vendor_type" name="vendor_type" class="vendor-type-select" required>
+                        <option value="">Select your service type</option>
+                        <option value="venue"><i class="fas fa-building vendor-icon"></i> Venue</option>
+                        <option value="catering"><i class="fas fa-utensils vendor-icon"></i> Catering</option>
+                        <option value="photography"><i class="fas fa-camera vendor-icon"></i> Photography</option>
+                        <option value="decor"><i class="fas fa-paint-brush vendor-icon"></i> Decor</option>
+                        <option value="music"><i class="fas fa-music vendor-icon"></i> Music</option>
+                        <option value="dressing"><i class="fas fa-tshirt vendor-icon"></i> Dressing</option>
+                        <option value="saloon"><i class="fas fa-spa vendor-icon"></i> Saloon</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+
+            <!-- Social Login Section -->
+            <div class="social-login">
+                <p>or continue with</p>
+                <div class="social-buttons">
+    <a href="https://accounts.google.com/signin" target="_blank" class="social-btn google-btn">
+        <i class="fab fa-google"></i> Google
+    </a>
+    <a href="https://www.facebook.com/login/" target="_blank" class="social-btn facebook-btn">
+        <i class="fab fa-facebook-f"></i> Facebook
+    </a>
+</div>
+
+            </div>
+            
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="service-provider_register.html">Register here</a></p>
+                <p><a href="service-provider_change-password.html">Forgot password?</a></p>
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+        // Handle vendor type selection and dashboard redirection
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const vendorType = document.getElementById('vendor_type').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // In a real implementation, you would send this to your server for authentication
+            console.log(`Logging in as ${vendorType} vendor with email: ${email}`);
+            
+            // Redirect to appropriate dashboard based on vendor type
+            if (vendorType) {
+                window.location.href = `${vendorType}_dashboard.html`;
+            }
+        });
+
+        // Social login handlers
+        document.getElementById('googleLogin').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Google login would be implemented here');
+        });
+
+        document.getElementById('facebookLogin').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Facebook login would be implemented here');
+        });
+
+        // Add icons to select options (since HTML doesn't support icons in options)
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.getElementById('vendor_type');
+            const options = select.querySelectorAll('option');
+            
+            // Remove icon tags from display text but keep value
+            options.forEach(option => {
+                if (option.text.includes('<i')) {
+                    option.text = option.text.replace(/<i[^>]*>.*?<\/i>/, '').trim();
+                }
+            });
+        });
+    </script>
+     
+</body>
+</html>
