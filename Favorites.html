@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wedora - Favorites</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+    }
+
+    /* Header */
+    .header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        padding: 15px 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+    }
+    .logo {
+        font-family: 'Playfair Display', serif;
+        font-size: 28px;
+        font-weight: 600;
+        color: #f645a3;
+    }
+    .nav-menu {
+        display: flex;
+        list-style: none;
+        gap: 30px;
+        align-items: center;
+    }
+    .nav-menu a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+    .nav-menu a:hover,
+    .nav-menu a.active {
+        color: #6c5ce7;
+    }
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6c5ce7, #f645a3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+    }
+    .logout-btn {
+        padding: 8px 16px;
+        background: #6c5ce7;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+    .logout-btn:hover {
+        background: #5649c0;
+    }
+
+    /* Main Content */
+    .main-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px 20px;
+    }
+    .page-title {
+        font-size: 28px;
+        font-weight: 600;
+        color: #6c5ce7;
+        margin-bottom: 20px;
+    }
+
+    /* Favorites Grid */
+    .favorites-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+    .favorite-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .favorite-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+    .vendor-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6c5ce7, #f645a3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: white;
+        margin-bottom: 15px;
+    }
+    .vendor-name {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #333;
+    }
+    .vendor-category {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 15px;
+    }
+    .remove-btn {
+        align-self: flex-start;
+        padding: 8px 14px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        background: #f645a3;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .remove-btn:hover {
+        background: #d93787;
+    }
+
+    @media (max-width: 768px) {
+        .nav-menu {
+            display: none;
+        }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="nav-container">
+      <div class="logo">Wedora</div>
+      <ul class="nav-menu">
+        <li><a href="Customer_dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="Browse_service.html"><i class="fas fa-search"></i> Browse Services</a></li>
+        <li><a href="Appointment_booking.html"><i class="fas fa-calendar"></i> My Bookings</a></li>
+        <li><a href="Favorites.html" class="active"><i class="fas fa-heart"></i> Favorites</a></li>
+        <li><a href="User_profile_management.html"><i class="fas fa-user"></i> Profile</a></li>
+      </ul>
+      <div class="user-info">
+        <div class="user-avatar">PP</div>
+        <span>Pawani Perera</span>
+        <button onclick="window.location='HomePage.html'" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="main-container">
+    <h1 class="page-title"><i class="fas fa-heart"></i> My Favorites</h1>
+
+    <div class="favorites-grid">
+      <!-- Example favorite vendor -->
+      <div class="favorite-card">
+        <div class="vendor-icon"><i class="fas fa-camera"></i></div>
+        <div class="vendor-name">Elegant Photography Studio</div>
+        <div class="vendor-category">Photography & Videography</div>
+        <button class="remove-btn"><i class="fas fa-trash"></i> Remove</button>
+      </div>
+
+      <div class="favorite-card">
+        <div class="vendor-icon"><i class="fas fa-music"></i></div>
+        <div class="vendor-name">Dream Music Band</div>
+        <div class="vendor-category">Entertainment</div>
+        <button class="remove-btn"><i class="fas fa-trash"></i> Remove</button>
+      </div>
+
+      <div class="favorite-card">
+        <div class="vendor-icon"><i class="fas fa-utensils"></i></div>
+        <div class="vendor-name">Royal Catering</div>
+        <div class="vendor-category">Catering Services</div>
+        <button class="remove-btn"><i class="fas fa-trash"></i> Remove</button>
+      </div>
+
+      <div class="favorite-card">
+        <div class="vendor-icon"><i class="fas fa-gem"></i></div>
+        <div class="vendor-name">Bridal Bliss Jewelers</div>
+        <div class="vendor-category">Jewelry</div>
+        <button class="remove-btn"><i class="fas fa-trash"></i> Remove</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

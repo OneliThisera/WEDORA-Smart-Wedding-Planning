@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Venues - Wedora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #4ecbed;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background:#157f97;
+            transform: translateY(-2px);
+        }
+        
+        .service-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #157f97, #4ecbed);
+            border-radius: 16px;
+            color: white;
+        }
+        
+        .service-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .service-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .gallery-section {
+            margin-top: 40px;
+        }
+        
+        .gallery-section h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-family: 'Playfair Display', serif;
+            color: #4ecbed;
+            font-size: 2.2rem;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            height: 300px;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            color: white;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover .image-overlay {
+            transform: translateY(0);
+        }
+        
+        .image-overlay h3 {
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+        
+        .venue-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .venue-price {
+            font-weight: 600;
+            color: #00b894;
+        }
+        
+        .venue-capacity {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cta-section h2 {
+            font-family: 'Playfair Display', serif;
+            color: #6c5ce7;
+            margin-bottom: 15px;
+            font-size: 2.2rem;
+        }
+        
+        .cta-section p {
+            margin-bottom: 25px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-btn:hover {
+            background: linear-gradient(135deg, #5649c0, #8a7df5);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .service-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .gallery-item {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="HomePage.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Services
+        </a>
+        
+        <div class="service-header">
+            <div class="service-icon">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <h1>Wedding Venues</h1>
+            <p>Discover the perfect location for your special day with our curated wedding venues</p>
+        </div>
+        
+        <div class="gallery-section">
+            <h2>Our Premium Wedding Venues</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="img/ve1.png">
+                    <div class="image-overlay">
+                        
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/ve2.png" >
+                    <div class="image-overlay">
+                       
+                        
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/ve3.png" >
+                    <div class="image-overlay">
+                        
+                        
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/ve4.png" >
+                    <div class="image-overlay">
+                        
+                        
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/ve5.png" >
+                    <div class="image-overlay">
+                       
+                        
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/ve6.png" >
+                    <div class="image-overlay">
+                        
+                       
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/ve7.png" >
+                    <div class="image-overlay">
+                        
+                        
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/ve8.png" >
+                    <div class="image-overlay">
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <h2>Ready to Find Your Perfect Venue?</h2>
+            <p>Contact us today to schedule a tour and discuss availability for your wedding date.</p>
+            <a href="Customer_login.html" class="cta-btn">Schedule a Tour</a>
+        </div>
+    </div>
+</body>
+</html>

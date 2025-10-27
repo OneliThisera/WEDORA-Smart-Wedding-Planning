@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Videography - Wedora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #fd79a8;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #e84393;
+            transform: translateY(-2px);
+        }
+        
+        .service-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            border-radius: 16px;
+            color: white;
+        }
+        
+        .service-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .service-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .service-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+        
+        .package-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .package-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .package-card h3 {
+            color: #fd79a8;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .package-card .price {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        
+        .package-card ul {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+        
+        .package-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .package-card li:before {
+            content: '✓';
+            color: #00b894;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .book-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .book-btn:hover {
+            background: linear-gradient(135deg, #e84393, #fd79a8);
+        }
+
+        .gallery-section {
+            margin-top: 40px;
+        }
+        
+        .gallery-section h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-family: 'Playfair Display', serif;
+            color: #da32a4;
+            font-size: 2.2rem;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            height: 300px;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            color: white;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover .image-overlay {
+            transform: translateY(0);
+        }
+        
+        .image-overlay h3 {
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cta-section h2 {
+            font-family: 'Playfair Display', serif;
+            color: #6c5ce7;
+            margin-bottom: 15px;
+            font-size: 2.2rem;
+        }
+        
+        .cta-section p {
+            margin-bottom: 25px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-btn:hover {
+            background: linear-gradient(135deg, #5649c0, #8a7df5);
+            transform: translateY(-2px);
+        }
+        
+        
+        @media (max-width: 768px) {
+            .service-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .service-header h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="HomePage.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Services
+        </a>
+        
+        <div class="service-header">
+            <div class="service-icon">
+                <i class="fas fa-video"></i>
+            </div>
+            <h1>Wedding Videography</h1>
+            <p>Relive your special day with beautifully crafted wedding films and videos</p>
+        </div>
+        
+        <div class="gallery-section">
+            <h2>Our Wedding Videography Portfolio</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="img/v1.png">
+                    <div class="image-overlay">
+                        
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/v2.png" >
+                    <div class="image-overlay">
+                      
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/v3.png" >
+                    <div class="image-overlay">
+                        
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/v4.png" >
+                    <div class="image-overlay">
+                        
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/v5.png" >
+                    <div class="image-overlay">
+                        
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/v6.png" >
+                    <div class="image-overlay">
+                        
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/v7.png" >
+                    <div class="image-overlay">
+                        
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/v8.png" >
+                    <div class="image-overlay">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wedora - Customer Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+            url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        color: #fff;
+    }
+    .logo {
+        font-family: 'Playfair Display', serif;
+        font-size: 32px;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 10px;
+        color: #f645a3;
+    }
+    .auth-container {
+        width: 100%;
+        max-width: 450px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        padding: 40px;
+        color: #333;
+    }
+    .auth-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .auth-header h2 {
+        color: #6c5ce7;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    .auth-header p {
+        color: #666;
+        font-size: 14px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+    .form-group input:focus {
+        outline: none;
+        border-color: #6c5ce7;
+    }
+    .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.3s;
+        border: none;
+        width: 100%;
+    }
+    .btn-primary {
+        background-color: #6c5ce7;
+        color: white;
+    }
+    .btn-primary:hover {
+        background-color: #5649c0;
+    }
+    .auth-footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #666;
+    }
+    .auth-footer a {
+        color: #6c5ce7;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+    .social-login {
+        margin: 25px 0;
+        text-align: center;
+    }
+    .social-login p {
+        color: #666;
+        margin-bottom: 15px;
+        position: relative;
+    }
+    .social-login p::before,
+    .social-login p::after {
+        content: "";
+        display: inline-block;
+        width: 30%;
+        height: 1px;
+        background: #ddd;
+        position: absolute;
+        top: 50%;
+    }
+    .social-login p::before {
+        left: 0;
+    }
+    .social-login p::after {
+        right: 0;
+    }
+    .social-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+    .social-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 1px solid #ddd;
+        background: white;
+        color: #555;
+        text-decoration: none;
+        width: 100%;
+    }
+    .social-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .social-btn i {
+        margin-right: 8px;
+        font-size: 18px;
+    }
+    .google-btn {
+        border-color: #DB4437;
+        color: #DB4437;
+    }
+    .google-btn:hover {
+        background-color: #f8f1f1;
+    }
+    .facebook-btn {
+        border-color: #4267B2;
+        color: #4267B2;
+    }
+    .facebook-btn:hover {
+        background-color: #f0f4fb;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="logo">Wedora</div>
+    <div class="auth-card">
+      <div class="auth-header">
+        <h2>Customer Login</h2>
+        <p>Access your Wedora customer account</p>
+      </div>
+      <form action="Customer_dashboard.html" method="GET" class="auth-form">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+
+      <div class="social-login">
+        <p>or continue with</p>
+        <div class="social-buttons">
+          <a href="#" class="social-btn google-btn"><i class="fab fa-google"></i> Google</a>
+          <a href="#" class="social-btn facebook-btn"><i class="fab fa-facebook-f"></i> Facebook</a>
+        </div>
+      </div>
+
+      <div class="auth-footer">
+        <p>Don't have an account? <a href="customer_register.html">Register here</a></p>
+        <p><a href="customer_change-password.html">Forgot password?</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simple form validation and redirection
+    document.querySelector('.auth-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      // Basic validation
+      if (!email || !password) {
+        alert('Please fill in all fields');
+        return;
+      }
+      
+      // If validation passes, redirect to dashboard
+      window.location.href = 'Customer_dashboard.html';
+    });
+    
+    // Demo login functionality for social buttons
+    document.querySelectorAll('.social-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        // For demo purposes, redirect to dashboard
+        window.location.href = 'Customer_dashboard.html';
+      });
+    });
+  </script>
+</body>
+</html>
