@@ -1,0 +1,675 @@
+<?php
+require 'db_connection.php';
+
+try {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Required fields
+        $required_fields = [
+            'company_name', 'owner_name', 'email', 'password',
+            'confirm_password', 'phone', 'service_type', 'location'
+        ];
+
+        foreach ($required_fields as $field) {
+            if (empty($_POST[$field])) {
+                throw new Exception("All fields are required");
+            }
+        }
+
+        // Validate password match
+        if ($_POST['password'] !== $_POST['confirm_password']) {
+            throw new Exception("Passwords do not match");
+        }
+
+        // Validate email
+        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("Invalid email format");
+        }
+
+        // Sanitize and prepare inputs
+        $company_name = trim($_POST['company_name']);
+        $owner_name = trim($_POST['owner_name']);
+        $email = trim($_POST['email']);
+        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $phone = trim($_POST['phone']);
+        $service_type = trim($_POST['service_type']);
+        $description = trim($_POST['description'] ?? '');
+        $location = trim($_POST['location']);
+        $profile_image_path = null;
+
+        // Handle profile image upload
+        if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = __DIR__ . '/profile/';
+
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+            }
+
+            $file_name = $_FILES['profile_image']['name'];
+            $file_tmp = $_FILES['profile_image']['tmp_name'];
+            $file_size = $_FILES['profile_image']['size'];
+            $file_type = $_FILES['profile_image']['type'];
+
+            $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+            $max_size = 2 * 1024 * 1024; // 2MB
+
+            if (!in_array($file_type, $allowed_types)) {
+                throw new Exception("Invalid image type. Only JPG, PNG, and GIF are allowed.");
+            }
+
+            if ($file_size > $max_size) {
+                throw new Exception("File too large. Max 2MB allowed.");
+            }
+
+            $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
+            $new_filename = 'profile_' . uniqid() . '.' . $file_ext;
+            $destination = $upload_dir . $new_filename;
+
+            if (!move_uploaded_file($file_tmp, $destination)) {
+                throw new Exception("Failed to upload image.");
+            }
+
+            // Store relative path
+            $profile_image_path = 'profile/' . $new_filename;
+        }
+
+        // check if email already exists
+        $check_email_sql = "SELECT id FROM s_provider_register WHERE email = :email";
+        $check_email = $pdo->prepare($check_email_sql);
+        if (!$check_email) {
+            throw new Exception("Failed to prepare email check query: " . implode(", ", $pdo->errorInfo()));
+        }
+
+        $check_email->execute(['email' => $email]);
+        if ($check_email->rowCount() > 0) {
+            throw new Exception("Email already registered. Please login.");
+        }
+
+        // Insert into database
+        $sql = "INSERT INTO s_provider_register (
+            company_name, owner_name, email, password, phone,
+            service_type, description, location, profile_image
+        ) VALUES (:company_name, :owner_name, :email, :password, :phone, 
+                 :service_type, :description, :location, :profile_image)";
+
+        $stmt = $pdo->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Failed to prepare insert query: " . implode(", ", $pdo->errorInfo()));
+        }
+
+        // Execute with parameters
+        $params = [
+            'company_name' => $company_name,
+            'owner_name' => $owner_name,
+            'email' => $email,
+            'password' => $password,
+            'phone' => $phone,
+            'service_type' => $service_type,
+            'description' => $description,
+            'location' => $location,
+            'profile_image' => $profile_image_path
+        ];
+
+        if (!$stmt->execute($params)) {
+            throw new Exception("Failed to execute insert query: " . implode(", ", $stmt->errorInfo()));
+        }
+
+        // Log successful insertion
+        error_log("Successfully inserted provider: $email");
+
+        // Create session
+        $_SESSION['provider_id'] = $pdo->lastInsertId();
+        $_SESSION['email'] = $email;
+        $_SESSION['company_name'] = $company_name;
+        $_SESSION['service_type'] = $service_type;
+        $_SESSION['profile_image'] = $profile_image_path;
+
+        //Redirect to service-type dashboard
+        header("Location: dashboards/{$service_type}_dashboard.php");
+        if (!file_exists($dashboard_file)) {
+            throw new Exception("Dashboard file not found: $dashboard_file");
+        }
+
+        // Redirect to service-type dashboard
+        header("Location: $dashboard_file");
+        exit();
+    }  
+    
+
+} catch (Exception $e) {
+    // Log the error
+    error_log("Error in service-provider_register.php: " . $e->getMessage());
+    
+    // Redirect with error message
+    header("Location: service-provider_register.html?error=" . urlencode($e->getMessage()));
+    exit();
+}
+?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedora- Wedding Service Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)), 
+                        url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+            background-size: cover;
+            color: #5a2d52;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #d4a5a5;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .tagline {
+            font-size: 20px;
+            font-weight: 300;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #d4a5a5, transparent);
+            margin: 30px 0;
+        }
+        
+        .auth-card {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(90, 45, 82, 0.1);
+            border: 1px solid rgba(212, 165, 165, 0.3);
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .auth-header h2 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #5a2d52;
+            margin-bottom: 10px;
+        }
+        
+        .auth-header p {
+            color: #7a5a72;
+            font-size: 16px;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background-color: #e6fffa;
+            color: #00b894;
+            border: 1px solid #00b894;
+        }
+        
+        .alert-danger {
+            background-color: #fff5f5;
+            color: #d44a6a;
+            border: 1px solid #f8d7da;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #5a2d52;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #e0c8d0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            background-color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #d4a5a5;
+            box-shadow: 0 0 0 3px rgba(212, 165, 165, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            border: none;
+            width: 100%;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .btn-primary {
+            background-color: #d4a5a5;
+            color: white;
+            letter-spacing: 1px;
+        }
+        
+        .btn-primary:hover {
+            background-color: #c28e8e;
+            transform: translateY(-2px);
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 16px;
+            color: #7a5a72;
+        }
+        
+        .auth-footer a {
+            color: #d4a5a5;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed #d4a5a5;
+        }
+        
+        .auth-footer a:hover {
+            color: #b87c7c;
+            border-bottom-style: solid;
+        }
+        
+        /* Profile Image Upload Styles */
+        .profile-image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .profile-image-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #d4a5a5;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .profile-image-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #f5e6ea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            border: 3px dashed #d4a5a5;
+        }
+        
+        .profile-image-placeholder i {
+            font-size: 40px;
+            color: #d4a5a5;
+        }
+        
+        .file-upload-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f5e6ea;
+            color: #5a2d52;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #d4a5a5;
+            text-align: center;
+        }
+        
+        .file-upload-label:hover {
+            background-color: #e8d5db;
+        }
+        
+        .file-upload-input {
+            display: none;
+        }
+        
+        small {
+            display: block;
+            margin-top: 5px;
+            color: #7a5a72;
+            font-size: 12px;
+        }
+        
+        /* Password strength indicator */
+        .password-strength {
+            height: 5px;
+            background: #eee;
+            margin: 5px 0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .strength-meter {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s, background 0.3s;
+        }
+        
+        .password-requirements {
+            margin-top: 10px;
+        }
+        
+        .requirement {
+            font-size: 12px;
+            color: #7a5a72;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .requirement i {
+            margin-right: 5px;
+            font-size: 10px;
+        }
+        
+        .requirement.valid i {
+            color: #00b894;
+        }
+        
+        .requirement.valid {
+            color: #00b894;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Wedora</div>
+            <div class="tagline">While you perfect your services, we'll perfect the platform for success.</div>
+        </div>
+        
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Create Account</h2>
+                <p>Join our network of trusted wedding professionals</p>
+            </div>
+            
+            <form action="service-provider_register.php" method="POST" class="auth-form" enctype="multipart/form-data">
+                <!-- Profile Image Upload -->
+                <div class="profile-image-container">
+                    <div class="profile-image-placeholder" id="imagePlaceholder">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <img src="" alt="Profile Preview" class="profile-image-preview" id="profilePreview">
+                    <label for="profile_image" class="file-upload-label">
+                        <i class="fas fa-upload"></i> Upload Profile Image
+                    </label>
+                    <input type="file" id="profile_image" name="profile_image" class="file-upload-input" accept="image/*">
+                    <small>Recommended size: 300x300px (Max 2MB)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="company_name">Company Name</label>
+                    <input type="text" id="company_name" name="company_name" required 
+                           placeholder="Enter your company name" minlength="3" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="owner_name">Owner/Manager Name</label>
+                    <input type="text" id="owner_name" name="owner_name" required 
+                           placeholder="Enter owner/manager name" minlength="2" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Business Email</label>
+                    <input type="email" id="email" name="email" required 
+                           placeholder="Enter your business email" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required 
+                           placeholder="Create a secure password (min 8 characters)" minlength="8">
+                    <div class="password-strength">
+                        <div class="strength-meter" id="strengthMeter"></div>
+                    </div>
+                    <div class="password-requirements">
+                        <div class="requirement" data-requirement="length">
+                            <i class="fas fa-times"></i> At least 8 characters
+                        </div>
+                        <div class="requirement" data-requirement="uppercase">
+                            <i class="fas fa-times"></i> At least 1 uppercase letter
+                        </div>
+                        <div class="requirement" data-requirement="number">
+                            <i class="fas fa-times"></i> At least 1 number
+                        </div>
+                        <div class="requirement" data-requirement="special">
+                            <i class="fas fa-times"></i> At least 1 special character
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required 
+                           placeholder="Confirm your password" minlength="8">
+                    <div id="password-match" style="color: #ff5252; font-size: 12px; margin-top: 5px; display: none;">
+                        Passwords do not match
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required 
+                           placeholder="Enter business contact number" pattern="[0-9]{10,15}" 
+                           title="Please enter a valid phone number (10-15 digits)">
+                </div>
+
+                <div class="form-group">
+                    <label for="service_type">Service Type</label>
+                    <select id="service_type" name="service_type" required>
+                        <option value="">Select your service type</option>
+                        <option value="venue">Venue</option>
+                        <option value="catering">Catering</option>
+                        <option value="photography">Photography</option>
+                        <option value="decor">Decor</option>
+                        <option value="music">Music</option>
+                        <option value="salon">Salon</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Business Description</label>
+                    <textarea id="description" name="description" rows="3" 
+                              placeholder="Briefly describe your services (max 500 characters)" maxlength="500"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Business Location</label>
+                    <input type="text" id="location" name="location" required 
+                           placeholder="Enter your business location" maxlength="100">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </form>
+            
+            <div class="divider"></div>
+            
+            <div class="auth-footer">
+                <p>Already have an account? <a href="service-provider_login.html">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Profile Image Preview
+        document.getElementById('profile_image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('profilePreview');
+    const placeholder = document.getElementById('imagePlaceholder');
+    
+    if (file) {
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            preview.src = event.target.result;
+            preview.style.display = 'block';
+            placeholder.style.display = 'none';
+        }
+        
+        reader.readAsDataURL(file);
+    } else {
+        preview.style.display = 'none';
+        placeholder.style.display = 'flex';
+    }
+});
+
+        // Password Strength Checker
+        const passwordInput = document.getElementById('password');
+        const strengthMeter = document.getElementById('strengthMeter');
+        const requirements = document.querySelectorAll('.requirement');
+
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            // Check length
+            if (password.length >= 8) {
+                strength += 25;
+                updateRequirement('length', true);
+            } else {
+                updateRequirement('length', false);
+            }
+            
+            // Check uppercase
+            if (/[A-Z]/.test(password)) {
+                strength += 25;
+                updateRequirement('uppercase', true);
+            } else {
+                updateRequirement('uppercase', false);
+            }
+            
+            // Check numbers
+            if (/[0-9]/.test(password)) {
+                strength += 25;
+                updateRequirement('number', true);
+            } else {
+                updateRequirement('number', false);
+            }
+            
+            // Check special chars
+            if (/[^A-Za-z0-9]/.test(password)) {
+                strength += 25;
+                updateRequirement('special', true);
+            } else {
+                updateRequirement('special', false);
+            }
+            
+            // Update strength meter
+            strengthMeter.style.width = strength + '%';
+            
+            // Update color based on strength
+            if (strength < 50) {
+                strengthMeter.style.backgroundColor = '#ff5252';
+            } else if (strength < 75) {
+                strengthMeter.style.backgroundColor = '#ffb142';
+            } else {
+                strengthMeter.style.backgroundColor = '#00b894';
+            }
+        });
+
+        function updateRequirement(type, isValid) {
+            const requirement = document.querySelector(`.requirement[data-requirement="${type}"]`);
+            const icon = requirement.querySelector('i');
+            
+            if (isValid) {
+                requirement.classList.add('valid');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-check');
+            } else {
+                requirement.classList.remove('valid');
+                icon.classList.remove('fa-check');
+                icon.classList.add('fa-times');
+            }
+        }
+
+        // Password Match Checker
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        const passwordMatchMessage = document.getElementById('password-match');
+
+        confirmPasswordInput.addEventListener('input', function() {
+            if (passwordInput.value !== this.value) {
+                passwordMatchMessage.style.display = 'block';
+            } else {
+                passwordMatchMessage.style.display = 'none';
+            }
+        });
+
+        // Form submission validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                e.preventDefault();
+                alert('Passwords do not match!');
+                return false;
+            }
+            
+            // You can add more validation here if needed
+            return true;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Wedora - Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #f645a3;
+            --dark-color: #2d3436;
+            --light-color: #f5f6fa;
+            --success-color: #00b894;
+            --danger-color: #d63031;
+            --text-color: #333;
+            --text-light: #666;
+            --border-color: #ddd;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding-top: 30px;
+            box-shadow: var(--shadow);
+            position: fixed;
+            height: 100%;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo i {
+            margin-right: 10px;
+        }
+
+        .service-type {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 10px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid white;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .page-title h1 {
+            font-size: 24px;
+            color: var(--dark-color);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background-color: var(--light-color);
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .user-profile img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+        }
+
+        .logout-btn {
+            color: var(--danger-color);
+            font-size: 18px;
+            margin-left: 10px;
+        }
+
+        .logout-btn:hover {
+            color: red;
+        }
+
+        .profile-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .profile-sidebar {
+            width: 300px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 5px solid var(--secondary-color);
+            box-shadow: 0 0 15px rgba(162, 155, 254, 0.5);
+        }
+
+        .profile-name {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .profile-type {
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .profile-stats {
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat-label {
+            color: var(--text-light);
+        }
+
+        .stat-value {
+            font-weight: 500;
+        }
+
+        .profile-content {
+            flex: 1;
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        .form-control:hover {
+            border-color: var(--accent-color);
+            background-color: #fafaff;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background-image: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            box-shadow: 0 4px 8px rgba(108, 92, 231, 0.3);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            background-image: linear-gradient(135deg, #5a4bcf, #d02d8e);
+            transform: scale(1.02);
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: rgba(0, 184, 148, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .alert-danger {
+            background-color: rgba(214, 48, 49, 0.1);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+
+        @media (max-width: 992px) {
+            .profile-container {
+                flex-direction: column;
+            }
+
+            .profile-sidebar {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                overflow: hidden;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+
+            .nav-link span {
+                display: none;
+            }
+        }
+
+        .profile-gallery {
+            margin-top: 40px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .gallery-item {
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+            border-radius: 10px;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-heart"></i>
+                    <span>Wedora</span>
+                </div>
+                <div class="service-type">
+                    <i class="fas fa-camera"></i>
+                    <span>Photography Provider</span>
+                </div>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="service-provider_dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="service-provider_profile.html" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="service-provider_gallery.html" class="nav-link">
+                        <i class="fas fa-image"></i>
+                        <span>Gallery</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="service-provider_services.html" class="nav-link">
+                        <i class="fas fa-concierge-bell"></i>
+                        <span>Services</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="service-provider_bookings.html" class="nav-link">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Bookings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="service-provider_payments.html" class="nav-link">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Payments</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="service-provider_reviews.html" class="nav-link">
+                        <i class="fas fa-star"></i>
+                        <span>Reviews</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="service-provider_promotions.html" class="nav-link">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>Promotions</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="service-provider_settings.html" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1>Profile Settings</h1>
+                    <p>Manage your business profile information</p>
+                </div>
+                 <div class="user-profile">
+                    <div class="user-info">
+                        <div class="user-name">John Smith</div>
+                        <div class="user-role">Photographer Provider</div>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name=John+Smith&background=6c5ce7&color=fff" alt="Profile Image">
+                    <a href="service-provider_login.html" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div id="successMessage" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span id="successText">Profile updated successfully!</span>
+            </div>
+            
+            <div id="errorMessage" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> <span id="errorText">An error occurred. Please try again.</span>
+            </div>
+
+            <div class="profile-container">
+                <div class="profile-sidebar">
+                    <img src="https://ui-avatars.com/api/?name=John+Smith&background=6c5ce7&color=fff" alt="Profile Image">
+                    <h2 class="profile-name">Jhon's Wedding Photography</h2>
+                    <div class="profile-type">Photography Services</div>
+                    <div class="profile-stats">
+                        <div class="stat-item"><span class="stat-label">Member Since</span><span class="stat-value">Jan 2021</span></div>
+                        <div class="stat-item"><span class="stat-label">Total Bookings</span><span class="stat-value">47</span></div>
+                        <div class="stat-item"><span class="stat-label">Average Rating</span><span class="stat-value">4.7/5</span></div>
+                    </div>
+                </div>
+
+                <div class="profile-content">
+                    <h2 class="section-title">Business Information</h2>
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="company_name">Company Name</label>
+                            <input type="text" id="company_name" name="company_name" class="form-control" value="John's Wedding Photography" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="owner_name">Owner/Manager Name</label>
+                            <input type="text" id="owner_name" name="owner_name" class="form-control" value="John Smith" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Business Email</label>
+                            <input type="email" id="email" name="email" class="form-control" value="jhon@gmail.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" class="form-control" value="077 711 1222" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">Business Location</label>
+                            <input type="text" id="location" name="location" class="form-control" value="123 Kandy road, Kadawatha" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Business Description</label>
+                            <textarea id="description" name="description" class="form-control">With over 5 years of experience in wedding photography, I specialize in capturing beautiful, authentic moments that tell your unique love story. My approach combines artistic vision with technical expertise to create timeless images you'll cherish forever. I work closely with each couple to understand their vision and deliver photos that exceed expectations.</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profile_image">Profile Image</label>
+                            <input type="file" id="profile_image" name="profile_image" class="form-control" accept="image/*">
+                            <small>Recommended size: 300x300 pixels, max 2MB</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gallery_images">Upload Work Images</label>
+                            <input type="file" id="gallery_images" name="gallery_images[]" class="form-control" accept="image/*" multiple>
+                            <small>You can upload multiple images (Max size per file: 2MB)</small>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                            <button type="button" class="btn" style="background-color: #f8f9fa; color: var(--text-color);" onclick="resetForm()">Reset Changes</button>
+                        </div>
+                    </form>
+
+                    <!-- Work Gallery Section -->
+                    <div class="profile-gallery">
+                        <h2 class="section-title">Work Gallery</h2>
+                        <div class="gallery-grid" id="galleryGrid">
+                            <!-- Gallery items will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sample gallery images
+        const galleryImages = [
+            "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+            "https://images.unsplash.com/photo-1554048612-b6a482bc67e5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+            "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+            "https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+            "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+        ];
+
+        // DOM elements
+        const profileForm = document.getElementById('profileForm');
+        const galleryGrid = document.getElementById('galleryGrid');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const successText = document.getElementById('successText');
+        const errorText = document.getElementById('errorText');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderGallery();
+            
+            // Form submission
+            profileForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                updateProfile();
+            });
+        });
+
+        // Render gallery images
+        function renderGallery() {
+            galleryGrid.innerHTML = '';
+            
+            galleryImages.forEach(imageUrl => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.innerHTML = `
+                    <img src="${imageUrl}" alt="Gallery Image">
+                `;
+                galleryGrid.appendChild(galleryItem);
+            });
+        }
+
+        // Update profile
+        function updateProfile() {
+            // Simulate form submission
+            const formData = new FormData(profileForm);
+            
+            // Show loading state
+            const submitBtn = profileForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Updating...';
+            submitBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Reset button state
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                
+                // Show success message
+                showSuccess('Profile updated successfully!');
+                
+                // If there's a new profile image, update the preview
+                const profileImageInput = document.getElementById('profile_image');
+                if (profileImageInput.files.length > 0) {
+                    const file = profileImageInput.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        document.querySelector('.profile-image').src = e.target.result;
+                        document.querySelector('.user-profile img').src = e.target.result;
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+                
+                // If there are new gallery images, add them to the gallery
+                const galleryInput = document.getElementById('gallery_images');
+                if (galleryInput.files.length > 0) {
+                    Array.from(galleryInput.files).forEach(file => {
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            const galleryItem = document.createElement('div');
+                            galleryItem.className = 'gallery-item';
+                            galleryItem.innerHTML = `
+                                <img src="${e.target.result}" alt="Gallery Image">
+                            `;
+                            galleryGrid.prepend(galleryItem);
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    });
+                    
+                    // Clear the file input
+                    galleryInput.value = '';
+                }
+            }, 1500);
+        }
+
+        // Reset form to original values
+        function resetForm() {
+            document.getElementById('company_name').value = "Sarah's Wedding Photography";
+            document.getElementById('owner_name').value = "Sarah Johnson";
+            document.getElementById('email').value = "sarah@weddingphotos.com";
+            document.getElementById('phone').value = "+1 (555) 123-4567";
+            document.getElementById('location').value = "123 Wedding Avenue, New York, NY";
+            document.getElementById('description').value = "With over 5 years of experience in wedding photography, I specialize in capturing beautiful, authentic moments that tell your unique love story. My approach combines artistic vision with technical expertise to create timeless images you'll cherish forever. I work closely with each couple to understand their vision and deliver photos that exceed expectations.";
+            document.getElementById('profile_image').value = '';
+            document.getElementById('gallery_images').value = '';
+            
+            showSuccess('Form reset to original values');
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            successText.textContent = message;
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+            
+            // Hide message after 3 seconds
+            setTimeout(hideMessages, 3000);
+        }
+
+        // Show error message
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.style.display = 'block';
+            successMessage.style.display = 'none';
+            
+            // Hide message after 3 seconds
+            setTimeout(hideMessages, 3000);
+        }
+
+        // Hide all messages
+        function hideMessages() {
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
