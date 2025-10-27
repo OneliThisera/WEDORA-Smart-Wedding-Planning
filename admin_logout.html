@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout - Wedora Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --light-bg: #f5f6fa;
+            --text-color: #333;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .logout-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .logout-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 32px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 16px;
+            transition: all 0.3s;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-logout {
+            background: var(--primary-color);
+            color: white;
+            margin-right: 10px;
+        }
+
+        .btn-logout:hover {
+            background: #5649c0;
+        }
+
+        .btn-cancel {
+            background: var(--light-bg);
+            color: var(--text-color);
+        }
+
+        .btn-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        .loading-bar {
+            height: 4px;
+            background: var(--light-bg);
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            animation: loading 3s linear forwards;
+        }
+
+        @keyframes loading {
+            to { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="logout-container">
+        <div class="logout-icon">
+            <i class="fas fa-sign-out-alt"></i>
+        </div>
+        <h1>Logout</h1>
+        <p>You are about to log out from the Wedora Admin Panel. Are you sure you want to continue?</p>
+        
+        <div>
+            <button class="btn btn-logout" onclick="performLogout()">Yes, Logout</button>
+            <a href="admin_dashboard.html" class="btn btn-cancel">Cancel</a>
+        </div>
+        
+        <div class="loading-bar">
+            <div class="loading-progress" id="loadingProgress"></div>
+        </div>
+    </div>
+
+    <script>
+        function performLogout() {
+            // Show loading animation
+            document.getElementById('loadingProgress').style.animation = 'loading 2s linear forwards';
+            
+            // Simulate logout process
+            setTimeout(function() {
+                // Redirect to login page
+                window.location.href = 'admin_login.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

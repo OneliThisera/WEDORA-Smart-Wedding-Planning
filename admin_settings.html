@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Wedora Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --sidebar-color: #341f97;
+            --light-bg: #f5f6fa;
+            --text-color: #333;
+            --text-light: #777;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+            --success-color: #00b894;
+            --warning-color: #fdcb6e;
+            --danger-color: #d63031;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-color);
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu a.active {
+            background-color: var(--primary-color);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .settings-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+
+        .settings-sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+
+        .settings-nav {
+            list-style: none;
+        }
+
+        .settings-nav li {
+            margin-bottom: 10px;
+        }
+
+        .settings-nav a {
+            display: block;
+            padding: 12px 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .settings-nav a:hover, .settings-nav a.active {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+        }
+
+        .settings-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: #5a4bd4;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: #00a085;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #fcb951;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background: #c23616;
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background: #8f7ffe;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .btn-large {
+            padding: 14px 28px;
+            font-size: 1.1rem;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            transform: scale(1.2);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--success-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .notification-warning {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .notification-error {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: flex-end;
+        }
+
+        .settings-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .settings-section:last-child {
+            border-bottom: none;
+        }
+
+        .settings-section h4 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .danger-zone {
+            background: #fff5f5;
+            border: 1px solid #ffcccc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .danger-zone h4 {
+            color: var(--danger-color);
+            margin-bottom: 10px;
+        }
+
+        .danger-zone p {
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .reset-button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+
+        .reset-button:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">W</div>
+            <h2>Wedora Admin</h2>
+        </div>
+        <ul class="sidebar-menu">
+             <li><a href="admin_dashboard.html" ><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="admin_user_management.html"><i class="fas fa-users"></i> User Management</a></li>
+            <li><a href="admin_provider_approval.html"><i class="fas fa-user-check"></i> Provider Approval</a></li>
+            <li><a href="admin_complaints.html"><i class="fas fa-exclamation-circle"></i> Complaints</a></li>
+            <li><a href="admin_reports.html" ><i class="fas fa-chart-bar"></i> Reports</a></li>
+            <li><a href="admin_categories.html"><i class="fas fa-layer-group"></i> Categories</a></li>
+            <li><a href="admin_location.html"><i class="fas fa-map-marker-alt"></i> Locations</a></li>
+            <li><a href="admin_news_feed.html"><i class="fas fa-newspaper"></i> News Feed</a></li>
+            <li><a href="admin_data_backup.html" ><i class="fas fa-database"></i> Data Backup</a></li>
+            <li><a href="admin_settings.html" class="active"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="admin_logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>System Settings</h1>
+                <p>Configure system preferences and options</p>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">AD</div>
+                <span>Admin User</span>
+            </div>
+        </div>
+
+        <div class="settings-container">
+            <div class="settings-sidebar">
+                <ul class="settings-nav">
+                    <li><a href="#" class="active" data-section="general">General Settings</a></li>
+                    <li><a href="#" data-section="email">Email Settings</a></li>
+                    <li><a href="#" data-section="payment">Payment Settings</a></li>
+                    <li><a href="#" data-section="security">Security</a></li>
+                    <li><a href="#" data-section="notifications">Notifications</a></li>
+                    <li><a href="#" data-section="api">API Settings</a></li>
+                    <li><a href="#" data-section="maintenance">Maintenance</a></li>
+                </ul>
+            </div>
+
+            <div class="settings-content">
+                <!-- General Settings Section -->
+                <div id="general-section" class="settings-section active">
+                    <h3>General Settings</h3>
+                    
+                    <div class="form-group">
+                        <label>Site Name <button class="reset-button" data-target="siteName">Reset</button></label>
+                        <input type="text" id="siteName" value="Wedora - Wedding Services">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Site Description <button class="reset-button" data-target="siteDescription">Reset</button></label>
+                        <textarea id="siteDescription">Your one-stop solution for all wedding planning needs. Find the best vendors, book services, and plan your perfect wedding.</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Admin Email <button class="reset-button" data-target="adminEmail">Reset</button></label>
+                        <input type="email" id="adminEmail" value="admin@wedora.com">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Timezone</label>
+                            <select id="timezone">
+                                <option>(UTC-05:00) Eastern Time</option>
+                                <option>(UTC-06:00) Central Time</option>
+                                <option>(UTC-07:00) Mountain Time</option>
+                                <option>(UTC-08:00) Pacific Time</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Date Format</label>
+                            <select id="dateFormat">
+                                <option>MM/DD/YYYY</option>
+                                <option>DD/MM/YYYY</option>
+                                <option>YYYY-MM-DD</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select id="currency">
+                            <option>USD ($)</option>
+                            <option>EUR (€)</option>
+                            <option>GBP (£)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Site Maintenance</label>
+                        <div class="checkbox-group">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="maintenance-mode">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <label for="maintenance-mode">Enable Maintenance Mode</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Settings Section -->
+                <div id="email-section" class="settings-section">
+                    <h3>Email Settings</h3>
+                    
+                    <div class="form-group">
+                        <label>SMTP Host</label>
+                        <input type="text" id="smtpHost" value="smtp.wedora.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>SMTP Port</label>
+                        <input type="number" id="smtpPort" value="587">
+                    </div>
+
+                    <div class="form-group">
+                        <label>SMTP Username</label>
+                        <input type="text" id="smtpUsername" value="noreply@wedora.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>SMTP Password</label>
+                        <input type="password" id="smtpPassword" value="********">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email Encryption</label>
+                        <select id="emailEncryption">
+                            <option>TLS</option>
+                            <option>SSL</option>
+                            <option>None</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-secondary" id="testEmail">
+                        <i class="fas fa-paper-plane"></i> Test Email Configuration
+                    </button>
+                </div>
+
+                <!-- Payment Settings Section -->
+                <div id="payment-section" class="settings-section">
+                    <h3>Payment Settings</h3>
+                    
+                    <div class="form-group">
+                        <label>Payment Gateway</label>
+                        <select id="paymentGateway">
+                            <option>Stripe</option>
+                            <option>PayPal</option>
+                            <option>Square</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Stripe Publishable Key</label>
+                        <input type="text" id="stripeKey" value="pk_test_xxxxxxxxxxxxxxxx">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Stripe Secret Key</label>
+                        <input type="password" id="stripeSecret" value="sk_test_xxxxxxxxxxxxxxxx">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Commission Rate (%)</label>
+                        <input type="number" id="commissionRate" value="15" min="0" max="50">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Auto-approve Payments</label>
+                        <div class="checkbox-group">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoApprovePayments" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <label for="autoApprovePayments">Enable automatic payment approval</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="resetSettings">
+                        <i class="fas fa-undo"></i> Reset to Defaults
+                    </button>
+                    <button class="btn btn-success" id="saveSettings">
+                        <i class="fas fa-save"></i> Save Settings
+                    </button>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="danger-zone">
+                    <h4>Danger Zone</h4>
+                    <p>These actions are irreversible. Please proceed with caution.</p>
+                    <button class="btn btn-danger" id="clearAllData">
+                        <i class="fas fa-trash"></i> Clear All Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notification-text">Settings saved successfully!</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const saveSettingsBtn = document.getElementById('saveSettings');
+            const resetSettingsBtn = document.getElementById('resetSettings');
+            const clearAllDataBtn = document.getElementById('clearAllData');
+            const testEmailBtn = document.getElementById('testEmail');
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notification-text');
+            const settingsNavLinks = document.querySelectorAll('.settings-nav a');
+            const settingsSections = document.querySelectorAll('.settings-section');
+            const resetButtons = document.querySelectorAll('.reset-button');
+            const maintenanceToggle = document.getElementById('maintenance-mode');
+            const autoApproveToggle = document.getElementById('autoApprovePayments');
+
+            // Save Settings Button
+            saveSettingsBtn.addEventListener('click', function() {
+                // Show loading state
+                this.classList.add('btn-loading');
+                this.disabled = true;
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    // Remove loading state
+                    this.classList.remove('btn-loading');
+                    this.disabled = false;
+                    
+                    showNotification('Settings saved successfully', 'success');
+                }, 1500);
+            });
+
+            // Reset Settings Button
+            resetSettingsBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to reset all settings to their default values?')) {
+                    // Show loading state
+                    this.classList.add('btn-loading');
+                    this.disabled = true;
+                    
+                    // Simulate reset process
+                    setTimeout(() => {
+                        // Remove loading state
+                        this.classList.remove('btn-loading');
+                        this.disabled = false;
+                        
+                        // Reset form values to defaults
+                        document.getElementById('siteName').value = 'Wedora - Wedding Services';
+                        document.getElementById('siteDescription').value = 'Your one-stop solution for all wedding planning needs. Find the best vendors, book services, and plan your perfect wedding.';
+                        document.getElementById('adminEmail').value = 'admin@wedora.com';
+                        document.getElementById('timezone').value = '(UTC-05:00) Eastern Time';
+                        document.getElementById('dateFormat').value = 'MM/DD/YYYY';
+                        document.getElementById('currency').value = 'USD ($)';
+                        document.getElementById('maintenance-mode').checked = false;
+                        
+                        showNotification('All settings reset to default values', 'success');
+                    }, 1000);
+                }
+            });
+
+            // Clear All Data Button
+            clearAllDataBtn.addEventListener('click', function() {
+                if (confirm('WARNING: This will permanently delete ALL data from the system. This action cannot be undone. Are you absolutely sure?')) {
+                    const confirmation = prompt('Type "DELETE ALL DATA" to confirm this action:');
+                    
+                    if (confirmation === 'DELETE ALL DATA') {
+                        // Show loading state
+                        this.classList.add('btn-loading');
+                        this.disabled = true;
+                        
+                        // Simulate data deletion
+                        setTimeout(() => {
+                            // Remove loading state
+                            this.classList.remove('btn-loading');
+                            this.disabled = false;
+                            
+                            showNotification('All data has been cleared from the system', 'error');
+                        }, 2000);
+                    } else {
+                        showNotification('Data deletion cancelled', 'warning');
+                    }
+                }
+            });
+
+            // Test Email Button
+            testEmailBtn.addEventListener('click', function() {
+                // Show loading state
+                this.classList.add('btn-loading');
+                this.disabled = true;
+                
+                // Simulate email test
+                setTimeout(() => {
+                    // Remove loading state
+                    this.classList.remove('btn-loading');
+                    this.disabled = false;
+                    
+                    showNotification('Test email sent successfully', 'success');
+                }, 1500);
+            });
+
+            // Settings Navigation
+            settingsNavLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    settingsNavLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // Get section to show
+                    const sectionId = this.getAttribute('data-section') + '-section';
+                    
+                    // Hide all sections
+                    settingsSections.forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // Show selected section
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+
+            // Reset Individual Fields
+            resetButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const defaultValue = getDefaultValue(targetId);
+                    
+                    document.getElementById(targetId).value = defaultValue;
+                    showNotification(`"${targetId}" reset to default value`, 'success');
+                });
+            });
+
+            // Toggle Switch Effects
+            maintenanceToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    showNotification('Maintenance mode enabled', 'warning');
+                } else {
+                    showNotification('Maintenance mode disabled', 'success');
+                }
+            });
+
+            autoApproveToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    showNotification('Auto-approve payments enabled', 'success');
+                } else {
+                    showNotification('Auto-approve payments disabled', 'warning');
+                }
+            });
+
+            // Get default values for reset
+            function getDefaultValue(fieldId) {
+                const defaults = {
+                    'siteName': 'Wedora - Wedding Services',
+                    'siteDescription': 'Your one-stop solution for all wedding planning needs. Find the best vendors, book services, and plan your perfect wedding.',
+                    'adminEmail': 'admin@wedora.com'
+                };
+                
+                return defaults[fieldId] || '';
+            }
+
+            // Show notification function
+            function showNotification(message, type) {
+                notificationText.textContent = message;
+                notification.className = 'notification';
+                
+                // Set notification type
+                if (type === 'success') {
+                    notification.classList.add('notification-success');
+                    notification.querySelector('i').className = 'fas fa-check-circle';
+                } else if (type === 'warning') {
+                    notification.classList.add('notification-warning');
+                    notification.querySelector('i').className = 'fas fa-exclamation-triangle';
+                } else if (type === 'error') {
+                    notification.classList.add('notification-error');
+                    notification.querySelector('i').className = 'fas fa-times-circle';
+                }
+                
+                // Show notification
+                notification.classList.add('show');
+                
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Wedora Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --sidebar-color: #341f97;
+            --light-bg: #f5f6fa;
+            --text-color: #333;
+            --text-light: #777;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+            --success-color: #00b894;
+            --danger-color: #d63031;
+            --warning-color: #fdcb6e;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-color);
+            color: white;
+            padding: 25px 15px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu a.active {
+            background-color: var(--primary-color);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 28px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-active {
+            background-color: rgba(0, 184, 148, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-blocked {
+            background-color: rgba(214, 48, 49, 0.1);
+            color: var(--danger-color);
+        }
+
+        .status-pending {
+            background-color: rgba(253, 203, 110, 0.1);
+            color: #e17055;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-edit {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-block {
+            background-color: #e17055;
+            color: white;
+        }
+
+        .btn-view {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .message {
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.success {
+            background-color: rgba(0, 184, 148, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .message.error {
+            background-color: rgba(214, 48, 49, 0.1);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+
+        .message.info {
+            background-color: rgba(108, 92, 231, 0.1);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">W</div>
+            <h2>Wedora Admin</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin_dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="#" class="active"><i class="fas fa-users"></i> User Management</a></li>
+            <li><a href="admin_provider_approval.html"><i class="fas fa-user-check"></i> Provider Approval</a></li>
+            <li><a href="admin_complaints.html"><i class="fas fa-exclamation-circle"></i> Complaints</a></li>
+            <li><a href="admin_reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+            <li><a href="admin_categories.html"><i class="fas fa-layer-group"></i> Categories</a></li>
+            <li><a href="admin_location.html"><i class="fas fa-map-marker-alt"></i> Locations</a></li>
+            <li><a href="admin_news_feed.html"><i class="fas fa-newspaper"></i> News Feed</a></li>
+            <li><a href="admin_data_backup.html"><i class="fas fa-database"></i> Data Backup</a></li>
+            <li><a href="admin_settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="admin_logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>User Management</h1>
+                <p style="color: var(--text-light);">Manage all user accounts and permissions</p>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">AD</div>
+                <span>Admin User</span>
+            </div>
+        </div>
+
+        <!-- Message Container -->
+        <div id="messageContainer"></div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search users by name, email, or role...">
+                <i class="fas fa-search"></i>
+            </div>
+            <button class="btn btn-primary" onclick="addUser()">
+                <i class="fas fa-plus"></i> Add User
+            </button>
+            <button class="btn btn-secondary" onclick="exportUsers()">
+                <i class="fas fa-download"></i> Export
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Join Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTable">
+                    <tr data-user-id="1001">
+                        <td>#1001</td>
+                        <td>John Doe</td>
+                        <td>john@gmail.com</td>
+                        <td>Customer</td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>2024-01-15</td>
+                        <td>
+                            <button class="action-btn btn-edit" onclick="editUser('1001')">Edit</button>
+                            <button class="action-btn btn-block" onclick="blockUser('1001')">Block</button>
+                            <button class="action-btn btn-delete" onclick="deleteUser('1001')">Delete</button>
+                        </td>
+                    </tr>
+                    <tr data-user-id="1002">
+                        <td>#1002</td>
+                        <td>Jane Smith</td>
+                        <td>jane@gmail.com</td>
+                        <td>Provider</td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>2024-01-10</td>
+                        <td>
+                            <button class="action-btn btn-edit" onclick="editUser('1002')">Edit</button>
+                            <button class="action-btn btn-block" onclick="blockUser('1002')">Block</button>
+                            <button class="action-btn btn-delete" onclick="deleteUser('1002')">Delete</button>
+                        </td>
+                    </tr>
+                    <tr data-user-id="1003">
+                        <td>#1003</td>
+                        <td>Mike Johnson</td>
+                        <td>mike@gmail.com</td>
+                        <td>Customer</td>
+                        <td><span class="status-badge status-blocked">Blocked</span></td>
+                        <td>2024-01-05</td>
+                        <td>
+                            <button class="action-btn btn-edit" onclick="editUser('1003')">Edit</button>
+                            <button class="action-btn" style="background: var(--success-color); color: white;" onclick="unblockUser('1003')">Unblock</button>
+                            <button class="action-btn btn-delete" onclick="deleteUser('1003')">Delete</button>
+                        </td>
+                    </tr>
+                    <tr data-user-id="1004">
+                        <td>#1004</td>
+                        <td>Sarah Wilson</td>
+                        <td>sarah@example.com</td>
+                        <td>Provider</td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                        <td>2024-01-20</td>
+                        <td>
+                            <button class="action-btn btn-edit" onclick="editUser('1004')">Edit</button>
+                            <button class="action-btn btn-block" onclick="blockUser('1004')">Block</button>
+                            <button class="action-btn" style="background: var(--success-color); color: white;" onclick="approveUser('1004')">Approve</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Show message function
+        function showMessage(message, type = 'success') {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = `
+                <div class="message ${type}">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-triangle' : 'info'}-circle"></i>
+                    ${message}
+                </div>
+            `;
+            messageContainer.style.display = 'block';
+            
+            // Auto hide after 4 seconds
+            setTimeout(() => {
+                messageContainer.style.display = 'none';
+            }, 4000);
+        }
+
+        // User management functions
+        function editUser(userId) {
+            showMessage(`Opening edit form for user #${userId}`, 'info');
+            // In real application, this would open a modal or redirect to edit page
+        }
+
+        function blockUser(userId) {
+            if (confirm('Are you sure you want to block this user?')) {
+                const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+                const statusBadge = row.querySelector('.status-badge');
+                const blockBtn = row.querySelector('.btn-block');
+                
+                // Update status
+                statusBadge.className = 'status-badge status-blocked';
+                statusBadge.textContent = 'Blocked';
+                
+                // Replace block button with unblock button
+                if (blockBtn) {
+                    blockBtn.outerHTML = `<button class="action-btn" style="background: var(--success-color); color: white;" onclick="unblockUser('${userId}')">Unblock</button>`;
+                }
+                
+                showMessage(`User #${userId} blocked successfully!`);
+            }
+        }
+
+        function unblockUser(userId) {
+            if (confirm('Are you sure you want to unblock this user?')) {
+                const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+                const statusBadge = row.querySelector('.status-badge');
+                const unblockBtn = row.querySelector('[onclick*="unblockUser"]');
+                
+                // Update status
+                statusBadge.className = 'status-badge status-active';
+                statusBadge.textContent = 'Active';
+                
+                // Replace unblock button with block button
+                if (unblockBtn) {
+                    unblockBtn.outerHTML = `<button class="action-btn btn-block" onclick="blockUser('${userId}')">Block</button>`;
+                }
+                
+                showMessage(`User #${userId} unblocked successfully!`);
+            }
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+                row.style.opacity = '0.5';
+                
+                // Simulate deletion with animation
+                setTimeout(() => {
+                    row.remove();
+                    showMessage(`User #${userId} deleted successfully!`);
+                }, 500);
+            }
+        }
+
+        function approveUser(userId) {
+            if (confirm('Approve this user account?')) {
+                const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+                const statusBadge = row.querySelector('.status-badge');
+                const approveBtn = row.querySelector('[onclick*="approveUser"]');
+                
+                // Update status
+                statusBadge.className = 'status-badge status-active';
+                statusBadge.textContent = 'Active';
+                
+                // Remove approve button
+                if (approveBtn) {
+                    approveBtn.remove();
+                }
+                
+                showMessage(`User #${userId} approved successfully!`);
+            }
+        }
+
+        function addUser() {
+            showMessage('Opening add user form...', 'info');
+            // In real application, this would open a modal
+            setTimeout(() => {
+                // Simulate adding a new user
+                const newUserId = Math.floor(Math.random() * 1000) + 1005;
+                const usersTable = document.getElementById('usersTable');
+                const newRow = document.createElement('tr');
+                newRow.setAttribute('data-user-id', newUserId);
+                newRow.innerHTML = `
+                    <td>#${newUserId}</td>
+                    <td>New User</td>
+                    <td>newuser@example.com</td>
+                    <td>Customer</td>
+                    <td><span class="status-badge status-active">Active</span></td>
+                    <td>${new Date().toISOString().split('T')[0]}</td>
+                    <td>
+                        <button class="action-btn btn-edit" onclick="editUser('${newUserId}')">Edit</button>
+                        <button class="action-btn btn-block" onclick="blockUser('${newUserId}')">Block</button>
+                        <button class="action-btn btn-delete" onclick="deleteUser('${newUserId}')">Delete</button>
+                    </td>
+                `;
+                usersTable.appendChild(newRow);
+                showMessage(`New user #${newUserId} added successfully!`);
+            }, 1000);
+        }
+
+        function exportUsers() {
+            showMessage('Exporting users data to CSV...', 'info');
+            // Simulate export process
+            setTimeout(() => {
+                showMessage('Users data exported successfully! Download will start shortly.');
+            }, 1500);
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#usersTable tr');
+            let visibleRows = 0;
+            
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleRows++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Show message if no results
+            if (visibleRows === 0 && searchTerm.length > 0) {
+                showMessage('No users found matching your search criteria.', 'error');
+            }
+        });
+
+        // Add some sample animation for table rows
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('#usersTable tr');
+            rows.forEach((row, index) => {
+                row.style.animationDelay = `${index * 0.1}s`;
+                row.style.animation = 'fadeInUp 0.5s ease';
+            });
+        });
+
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            #usersTable tr {
+                animation: fadeInUp 0.5s ease;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

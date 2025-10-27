@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Management - Wedora Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --sidebar-color: #341f97;
+            --light-bg: #f5f6fa;
+            --text-color: #333;
+            --text-light: #777;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+            --success-color: #00b894;
+            --danger-color: #d63031;
+            --warning-color: #fdcb6e;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-color);
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu a.active {
+            background-color: var(--primary-color);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: #5a4bd4;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: #00a085;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #fcb951;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background: #c23616;
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background: #8f7ffe;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-large {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-edit {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background-color: #8f7ffe;
+        }
+
+        .btn-delete {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #c23616;
+        }
+
+        .btn-toggle {
+            background-color: var(--warning-color);
+            color: #333;
+        }
+
+        .btn-toggle:hover {
+            background-color: #fcb951;
+        }
+
+        .status-active {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .status-inactive {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .notification-warning {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .notification-error {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1001;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">W</div>
+            <h2>Wedora Admin</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin_dashboard.html" ><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="admin_user_management.html"><i class="fas fa-users"></i> User Management</a></li>
+            <li><a href="admin_provider_approval.html"><i class="fas fa-user-check"></i> Provider Approval</a></li>
+            <li><a href="admin_complaints.html"><i class="fas fa-exclamation-circle"></i> Complaints</a></li>
+            <li><a href="admin_reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+            <li><a href="admin_categories.html" class="active"><i class="fas fa-layer-group"></i> Categories</a></li>
+            <li><a href="admin_location.html"><i class="fas fa-map-marker-alt"></i> Locations</a></li>
+            <li><a href="admin_news_feed.html"><i class="fas fa-newspaper"></i> News Feed</a></li>
+            <li><a href="admin_data_backup.html"><i class="fas fa-database"></i> Data Backup</a></li>
+            <li><a href="admin_settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="admin_logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Category Management</h1>
+                <p>Manage service categories and subcategories</p>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">AD</div>
+                <span>Admin User</span>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <h3 style="margin-bottom: 15px;">Add New Category</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px;">
+                <div class="form-group">
+                    <label>Category Name</label>
+                    <input type="text" id="categoryName" placeholder="Enter category name">
+                </div>
+                <div class="form-group">
+                    <label>Parent Category</label>
+                    <select id="parentCategory" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                        <option value="">None (Main Category)</option>
+                        <option>Venue Services</option>
+                        <option>Photography</option>
+                        <option>Catering</option>
+                    </select>
+                </div>
+                <div class="form-group" style="display: flex; align-items: end;">
+                    <button class="btn btn-large" id="addCategory">
+                        <i class="fas fa-plus"></i> Add Category
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchCategory" placeholder="Search categories...">
+            <button class="btn btn-secondary" id="searchBtn">
+                <i class="fas fa-search"></i> Search
+            </button>
+            <button class="btn btn-warning" id="clearSearch">
+                <i class="fas fa-times"></i> Clear
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table id="categoriesTable">
+                <thead>
+                    <tr>
+                        <th>Category ID</th>
+                        <th>Category Name</th>
+                        <th>Parent Category</th>
+                        <th>Service Count</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#CAT001</td>
+                        <td>Photography</td>
+                        <td>-</td>
+                        <td>45</td>
+                        <td class="status-active">Active</td>
+                        <td>
+                            <button class="action-btn btn-edit edit-category">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="action-btn btn-toggle toggle-category">
+                                <i class="fas fa-ban"></i> Disable
+                            </button>
+                            <button class="action-btn btn-delete delete-category">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>#CAT002</td>
+                        <td>Venue Services</td>
+                        <td>-</td>
+                        <td>38</td>
+                        <td class="status-active">Active</td>
+                        <td>
+                            <button class="action-btn btn-edit edit-category">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="action-btn btn-toggle toggle-category">
+                                <i class="fas fa-ban"></i> Disable
+                            </button>
+                            <button class="action-btn btn-delete delete-category">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>#CAT003</td>
+                        <td>Catering</td>
+                        <td>-</td>
+                        <td>32</td>
+                        <td class="status-active">Active</td>
+                        <td>
+                            <button class="action-btn btn-edit edit-category">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="action-btn btn-toggle toggle-category">
+                                <i class="fas fa-ban"></i> Disable
+                            </button>
+                            <button class="action-btn btn-delete delete-category">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>#CAT004</td>
+                        <td>Wedding Photography</td>
+                        <td>Photography</td>
+                        <td>28</td>
+                        <td class="status-active">Active</td>
+                        <td>
+                            <button class="action-btn btn-edit edit-category">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="action-btn btn-toggle toggle-category">
+                                <i class="fas fa-ban"></i> Disable
+                            </button>
+                            <button class="action-btn btn-delete delete-category">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="action-buttons">
+                <button class="btn btn-warning" id="refreshData">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+                <button class="btn btn-danger" id="clearAll">
+                    <i class="fas fa-trash-alt"></i> Clear All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notification-text">Category added successfully!</span>
+    </div>
+
+    <!-- Edit Category Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Category</h3>
+                <button class="modal-close" id="closeEditModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Category Name</label>
+                    <input type="text" id="editCategoryName" placeholder="Enter category name">
+                </div>
+                <div class="form-group">
+                    <label>Parent Category</label>
+                    <select id="editParentCategory" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                        <option value="">None (Main Category)</option>
+                        <option>Venue Services</option>
+                        <option>Photography</option>
+                        <option>Catering</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="editCategoryStatus" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEdit">Cancel</button>
+                <button class="btn btn-success" id="saveCategory">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Deletion</h3>
+                <button class="modal-close" id="closeDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this category? This action cannot be undone.</p>
+                <p><strong id="deleteCategoryName">Category Name</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelDelete">Cancel</button>
+                <button class="btn btn-danger" id="confirmDelete">Delete Category</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const addCategoryBtn = document.getElementById('addCategory');
+            const searchBtn = document.getElementById('searchBtn');
+            const clearSearchBtn = document.getElementById('clearSearch');
+            const refreshDataBtn = document.getElementById('refreshData');
+            const clearAllBtn = document.getElementById('clearAll');
+            const editCategoryBtns = document.querySelectorAll('.edit-category');
+            const toggleCategoryBtns = document.querySelectorAll('.toggle-category');
+            const deleteCategoryBtns = document.querySelectorAll('.delete-category');
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notification-text');
+            const editModal = document.getElementById('editModal');
+            const closeEditModal = document.getElementById('closeEditModal');
+            const cancelEdit = document.getElementById('cancelEdit');
+            const saveCategoryBtn = document.getElementById('saveCategory');
+            const deleteModal = document.getElementById('deleteModal');
+            const closeDeleteModal = document.getElementById('closeDeleteModal');
+            const cancelDelete = document.getElementById('cancelDelete');
+            const confirmDeleteBtn = document.getElementById('confirmDelete');
+            const deleteCategoryName = document.getElementById('deleteCategoryName');
+            const searchInput = document.getElementById('searchCategory');
+            const categoriesTable = document.getElementById('categoriesTable');
+            const tableRows = categoriesTable.querySelectorAll('tbody tr');
+
+            // Add Category Button
+            addCategoryBtn.addEventListener('click', function() {
+                const categoryName = document.getElementById('categoryName').value;
+                const parentCategory = document.getElementById('parentCategory').value;
+                
+                if (!categoryName) {
+                    showNotification('Please enter a category name', 'error');
+                    return;
+                }
+                
+                // Show loading state
+                this.classList.add('btn-loading');
+                this.disabled = true;
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    // Remove loading state
+                    this.classList.remove('btn-loading');
+                    this.disabled = false;
+                    
+                    // Add new row to table
+                    const newRow = document.createElement('tr');
+                    const categoryId = '#CAT' + (100 + tableRows.length + 1);
+                    
+                    newRow.innerHTML = `
+                        <td>${categoryId}</td>
+                        <td>${categoryName}</td>
+                        <td>${parentCategory || '-'}</td>
+                        <td>0</td>
+                        <td class="status-active">Active</td>
+                        <td>
+                            <button class="action-btn btn-edit edit-category">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="action-btn btn-toggle toggle-category">
+                                <i class="fas fa-ban"></i> Disable
+                            </button>
+                            <button class="action-btn btn-delete delete-category">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    `;
+                    
+                    categoriesTable.querySelector('tbody').appendChild(newRow);
+                    
+                    // Reattach event listeners to new buttons
+                    attachEventListenersToRow(newRow);
+                    
+                    // Clear form
+                    document.getElementById('categoryName').value = '';
+                    document.getElementById('parentCategory').value = '';
+                    
+                    showNotification(`Category "${categoryName}" added successfully`, 'success');
+                }, 1500);
+            });
+
+            // Search Button
+            searchBtn.addEventListener('click', function() {
+                const searchTerm = searchInput.value.toLowerCase();
+                
+                if (!searchTerm) {
+                    showNotification('Please enter a search term', 'warning');
+                    return;
+                }
+                
+                let found = false;
+                
+                tableRows.forEach(row => {
+                    const categoryName = row.cells[1].textContent.toLowerCase();
+                    const parentCategory = row.cells[2].textContent.toLowerCase();
+                    
+                    if (categoryName.includes(searchTerm) || parentCategory.includes(searchTerm)) {
+                        row.style.display = '';
+                        found = true;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                if (!found) {
+                    showNotification('No categories found matching your search', 'warning');
+                } else {
+                    showNotification(`Search completed for "${searchTerm}"`, 'success');
+                }
+            });
+
+            // Clear Search Button
+            clearSearchBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                tableRows.forEach(row => {
+                    row.style.display = '';
+                });
+                showNotification('Search cleared', 'success');
+            });
+
+            // Refresh Data Button
+            refreshDataBtn.addEventListener('click', function() {
+                // Show loading state
+                this.classList.add('btn-loading');
+                this.disabled = true;
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    // Remove loading state
+                    this.classList.remove('btn-loading');
+                    this.disabled = false;
+                    
+                    showNotification('Category data refreshed', 'success');
+                }, 1500);
+            });
+
+            // Clear All Button
+            clearAllBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all categories? This action cannot be undone.')) {
+                    const tbody = categoriesTable.querySelector('tbody');
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No categories available</td></tr>';
+                    showNotification('All categories cleared', 'error');
+                }
+            });
+
+            // Edit Category Buttons
+            function attachEventListenersToRow(row) {
+                const editBtn = row.querySelector('.edit-category');
+                const toggleBtn = row.querySelector('.toggle-category');
+                const deleteBtn = row.querySelector('.delete-category');
+                
+                editBtn.addEventListener('click', function() {
+                    const categoryName = row.cells[1].textContent;
+                    const parentCategory = row.cells[2].textContent;
+                    const status = row.cells[4].textContent;
+                    
+                    document.getElementById('editCategoryName').value = categoryName;
+                    document.getElementById('editParentCategory').value = parentCategory === '-' ? '' : parentCategory;
+                    document.getElementById('editCategoryStatus').value = status.toLowerCase();
+                    
+                    // Store reference to the row being edited
+                    saveCategoryBtn.dataset.editingRow = Array.from(tableRows).indexOf(row);
+                    
+                    editModal.style.display = 'flex';
+                });
+                
+                toggleBtn.addEventListener('click', function() {
+                    const statusCell = row.cells[4];
+                    const isActive = statusCell.textContent === 'Active';
+                    
+                    statusCell.textContent = isActive ? 'Inactive' : 'Active';
+                    statusCell.className = isActive ? 'status-inactive' : 'status-active';
+                    
+                    toggleBtn.innerHTML = isActive ? 
+                        '<i class="fas fa-check"></i> Enable' : 
+                        '<i class="fas fa-ban"></i> Disable';
+                    
+                    showNotification(`Category ${isActive ? 'disabled' : 'enabled'} successfully`, 'success');
+                });
+                
+                deleteBtn.addEventListener('click', function() {
+                    const categoryName = row.cells[1].textContent;
+                    deleteCategoryName.textContent = categoryName;
+                    
+                    // Store reference to the row being deleted
+                    confirmDeleteBtn.dataset.deletingRow = Array.from(tableRows).indexOf(row);
+                    
+                    deleteModal.style.display = 'flex';
+                });
+            }
+
+            // Attach event listeners to existing rows
+            tableRows.forEach(row => {
+                attachEventListenersToRow(row);
+            });
+
+            // Save Category Changes
+            saveCategoryBtn.addEventListener('click', function() {
+                const rowIndex = this.dataset.editingRow;
+                const row = tableRows[rowIndex];
+                
+                const newName = document.getElementById('editCategoryName').value;
+                const newParent = document.getElementById('editParentCategory').value;
+                const newStatus = document.getElementById('editCategoryStatus').value;
+                
+                if (!newName) {
+                    showNotification('Please enter a category name', 'error');
+                    return;
+                }
+                
+                row.cells[1].textContent = newName;
+                row.cells[2].textContent = newParent || '-';
+                row.cells[4].textContent = newStatus === 'active' ? 'Active' : 'Inactive';
+                row.cells[4].className = newStatus === 'active' ? 'status-active' : 'status-inactive';
+                
+                editModal.style.display = 'none';
+                showNotification('Category updated successfully', 'success');
+            });
+
+            // Confirm Delete
+            confirmDeleteBtn.addEventListener('click', function() {
+                const rowIndex = this.dataset.deletingRow;
+                const row = tableRows[rowIndex];
+                const categoryName = row.cells[1].textContent;
+                
+                row.remove();
+                deleteModal.style.display = 'none';
+                showNotification(`Category "${categoryName}" deleted successfully`, 'error');
+            });
+
+            // Close Modals
+            closeEditModal.addEventListener('click', function() {
+                editModal.style.display = 'none';
+            });
+            
+            cancelEdit.addEventListener('click', function() {
+                editModal.style.display = 'none';
+            });
+            
+            closeDeleteModal.addEventListener('click', function() {
+                deleteModal.style.display = 'none';
+            });
+            
+            cancelDelete.addEventListener('click', function() {
+                deleteModal.style.display = 'none';
+            });
+
+            // Show notification function
+            function showNotification(message, type) {
+                notificationText.textContent = message;
+                notification.className = 'notification';
+                
+                // Set notification type
+                if (type === 'success') {
+                    notification.classList.add('notification-success');
+                    notification.querySelector('i').className = 'fas fa-check-circle';
+                } else if (type === 'warning') {
+                    notification.classList.add('notification-warning');
+                    notification.querySelector('i').className = 'fas fa-exclamation-triangle';
+                } else if (type === 'error') {
+                    notification.classList.add('notification-error');
+                    notification.querySelector('i').className = 'fas fa-times-circle';
+                }
+                
+                // Show notification
+                notification.classList.add('show');
+                
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

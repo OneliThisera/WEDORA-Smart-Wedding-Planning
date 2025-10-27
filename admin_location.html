@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Management - Wedora Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --sidebar-color: #341f97;
+            --light-bg: #f5f6fa;
+            --text-color: #333;
+            --text-light: #777;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+            --success-color: #00b894;
+            --danger-color: #d63031;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-color);
+            color: white;
+            padding: 25px 15px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu a.active {
+            background-color: var(--primary-color);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 28px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-active {
+            background-color: rgba(0, 184, 148, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-inactive {
+            background-color: rgba(214, 48, 49, 0.1);
+            color: var(--danger-color);
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-edit {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-activate {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .message {
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.success {
+            background-color: rgba(0, 184, 148, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .message.error {
+            background-color: rgba(214, 48, 49, 0.1);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+
+        .message.info {
+            background-color: rgba(108, 92, 231, 0.1);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">W</div>
+            <h2>Wedora Admin</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin_dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="admin_user_management.html"><i class="fas fa-users"></i> User Management</a></li>
+            <li><a href="admin_provider_approval.html"><i class="fas fa-user-check"></i> Provider Approval</a></li>
+            <li><a href="admin_complaints.html"><i class="fas fa-exclamation-circle"></i> Complaints</a></li>
+            <li><a href="admin_reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+            <li><a href="admin_categories.html"><i class="fas fa-layer-group"></i> Categories</a></li>
+            <li><a href="#" class="active"><i class="fas fa-map-marker-alt"></i> Locations</a></li>
+            <li><a href="admin_news_feed.html"><i class="fas fa-newspaper"></i> News Feed</a></li>
+            <li><a href="admin_data_backup.html"><i class="fas fa-database"></i> Data Backup</a></li>
+            <li><a href="admin_settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="admin_logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Location Management</h1>
+                <p style="color: var(--text-light);">Manage service locations and coverage areas</p>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">AD</div>
+                <span>Admin User</span>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-number" id="activeCount">4</div>
+                <div class="stat-label">Active Locations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="inactiveCount">1</div>
+                <div class="stat-label">Inactive Locations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalCount">5</div>
+                <div class="stat-label">Total Locations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="serviceCount"></div>
+                <div class="stat-label">Total Services</div>
+            </div>
+        </div>
+
+        <!-- Message Container -->
+        <div id="messageContainer"></div>
+
+        <!-- Add Location Form -->
+        <div class="form-container">
+            <h3 style="margin-bottom: 15px;">Add New Location</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px;">
+                <div class="form-group">
+                    <label>Location Name</label>
+                    <input type="text" id="locationName" placeholder="Enter location name">
+                </div>
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" id="locationCity" placeholder="Enter city">
+                </div>
+                <div class="form-group">
+                    <label>State</label>
+                    <input type="text" id="locationState" placeholder="Enter state">
+                </div>
+                <div class="form-group" style="display: flex; align-items: end;">
+                    <button class="btn btn-primary" onclick="addLocation()">Add Location</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Locations Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Location ID</th>
+                        <th>Location Name</th>
+                        <th>City</th>
+                        <th>Province</th>
+                        <th>Service Count</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="locationsTable">
+                    <tr data-location-id="LOC001">
+                        <td>#LOC001</td>
+                        <td>Colombo 7</td>
+                        <td>Colombo</td>
+                        <td>Western</td>
+                        <td>156</td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="action-btn btn-edit" onclick="editLocation('LOC001')">Edit</button>
+                            <button class="action-btn btn-delete" onclick="deleteLocation('LOC001')">Delete</button>
+                        </td>
+                    </tr>
+                    <tr data-location-id="LOC002">
+                        <td>#LOC002</td>
+                        <td>Boralle</td>
+                        <td>Colombo 10</td>
+                        <td>Western</td>
+                        <td>142</td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="action-btn btn-edit" onclick="editLocation('LOC002')">Edit</button>
+                            <button class="action-btn btn-delete" onclick="deleteLocation('LOC002')">Delete</button>
+                        </td>
+                    </tr>
+                    <tr data-location-id="LOC003">
+                        <td>#LOC003</td>
+                        <td>Mountlaveniya</td>
+                        <td>Colombo</td>
+                        <td>Western</td>
+                        <td>98</td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="action-btn btn-edit" onclick="editLocation('LOC003')">Edit</button>
+                            <button class="action-btn btn-delete" onclick="deleteLocation('LOC003')">Delete</button>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Show message function
+        function showMessage(message, type = 'success') {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = `
+                <div class="message ${type}">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-triangle' : 'info'}-circle"></i>
+                    ${message}
+                </div>
+            `;
+            messageContainer.style.display = 'block';
+            
+            setTimeout(() => {
+                messageContainer.style.display = 'none';
+            }, 4000);
+        }
+
+        // Location management functions
+        function addLocation() {
+            const name = document.getElementById('locationName').value;
+            const city = document.getElementById('locationCity').value;
+            const state = document.getElementById('locationState').value;
+            
+            if (!name || !city || !state) {
+                showMessage('Please fill in all fields', 'error');
+                return;
+            }
+            
+            const newLocationId = 'LOC' + (Math.floor(Math.random() * 1000) + 6).toString().padStart(3, '0');
+            const locationsTable = document.getElementById('locationsTable');
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-location-id', newLocationId);
+            newRow.innerHTML = `
+                <td>#${newLocationId}</td>
+                <td>${name}</td>
+                <td>${city}</td>
+                <td>${state}</td>
+                <td>0</td>
+                <td><span class="status-badge status-active">Active</span></td>
+                <td>
+                    <button class="action-btn btn-edit" onclick="editLocation('${newLocationId}')">Edit</button>
+                    <button class="action-btn btn-delete" onclick="deleteLocation('${newLocationId}')">Delete</button>
+                </td>
+            `;
+            locationsTable.appendChild(newRow);
+            
+            // Clear form
+            document.getElementById('locationName').value = '';
+            document.getElementById('locationCity').value = '';
+            document.getElementById('locationState').value = '';
+            
+            // Update stats
+            updateStats();
+            
+            showMessage(`Location "${name}" added successfully!`);
+        }
+
+        function editLocation(locationId) {
+            const row = document.querySelector(`tr[data-location-id="${locationId}"]`);
+            const name = row.cells[1].textContent;
+            const city = row.cells[2].textContent;
+            const state = row.cells[3].textContent;
+            
+            // In real application, this would open an edit modal
+            showMessage(`Editing location: ${name} (${city}, ${state})`, 'info');
+        }
+
+        function deleteLocation(locationId) {
+            if (confirm('Are you sure you want to delete this location?')) {
+                const row = document.querySelector(`tr[data-location-id="${locationId}"]`);
+                const locationName = row.cells[1].textContent;
+                
+                row.style.opacity = '0.5';
+                
+                // Simulate deletion with animation
+                setTimeout(() => {
+                    row.remove();
+                    updateStats();
+                    showMessage(`Location "${locationName}" deleted successfully!`);
+                }, 500);
+            }
+        }
+
+        function activateLocation(locationId) {
+            const row = document.querySelector(`tr[data-location-id="${locationId}"]`);
+            const statusBadge = row.querySelector('.status-badge');
+            const activateBtn = row.querySelector('.btn-activate');
+            
+            // Update status
+            statusBadge.className = 'status-badge status-active';
+            statusBadge.textContent = 'Active';
+            
+            // Replace activate button with delete button
+            if (activateBtn) {
+                activateBtn.outerHTML = '<button class="action-btn btn-delete" onclick="deleteLocation(\'' + locationId + '\')">Delete</button>';
+            }
+            
+            // Update stats
+            updateStats();
+            
+            showMessage(`Location activated successfully!`);
+        }
+
+        // Update statistics
+        function updateStats() {
+            const rows = document.querySelectorAll('#locationsTable tr');
+            let activeCount = 0;
+            let inactiveCount = 0;
+            let totalServices = 0;
+            
+            rows.forEach(row => {
+                const statusBadge = row.querySelector('.status-badge');
+                const serviceCount = parseInt(row.cells[4].textContent);
+                
+                if (statusBadge.textContent === 'Active') activeCount++;
+                else if (statusBadge.textContent === 'Inactive') inactiveCount++;
+                
+                totalServices += serviceCount;
+            });
+            
+            const totalCount = activeCount + inactiveCount;
+            
+            document.getElementById('activeCount').textContent = activeCount;
+            document.getElementById('inactiveCount').textContent = inactiveCount;
+            document.getElementById('totalCount').textContent = totalCount;
+            document.getElementById('serviceCount').textContent = totalServices;
+        }
+
+        // Initialize stats on page load
+        document.addEventListener('DOMContentLoaded', updateStats);
+    </script>
+</body>
+</html>
